@@ -27,16 +27,16 @@ class ByteCase {
             fail("got "+a_len+" bytes, want "+b_len);
         }
         while (a_len-- > 0) {
-		    if (a[a_off] != b[b_off]) {
-		        fail("byte a["+a_off+"]: got "+hex(a[a_off])+", want "+hex(b[b_off]));
-		    }
-		    a_off++; b_off++;
-		}
+            if (a[a_off] != b[b_off]) {
+                fail("byte a["+a_off+"]: got "+hex(a[a_off])+", want "+hex(b[b_off]));
+            }
+            a_off++; b_off++;
+        }
     }
 
     static String hex(byte b) { return new String(new byte[]{hex[(b>>4)&0x0f],hex[b&0x0f]}); }
     static byte[] hex = {0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x61,0x62,0x63,0x64,0x65,0x66};
-	    
+
     static void dump(byte[] b) {
         dump(b,0,b.length);
     }
@@ -73,12 +73,12 @@ class ByteCase {
         }
     }
 
-	@Test
-	void test() {
-	    byte[] a = new byte[] {0,0,0,1,2,3,4,5,0,0,0};
-	    byte[] b = new byte[] {9,9,1,2,3,4,5,9,9};
-	    cmp(a,3,5,b,2,5);
-	    dump(a);
-	}
+    @Test
+    void test() {
+        byte[] a = new byte[] {0,0,0,1,2,3,4,5,0,0,0};
+        byte[] b = new byte[] {9,9,1,2,3,4,5,9,9};
+        cmp(a,3,5,b,2,5);
+        dump(a);
+    }
 
 }
