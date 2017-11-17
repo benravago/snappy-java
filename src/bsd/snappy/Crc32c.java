@@ -1,4 +1,4 @@
-package leveldb.io;
+package bsd.snappy;
 
 /**
  * An implementation of the CRC32 checksum that uses the CRC32-C (Castagnoli) polynomial.
@@ -18,9 +18,10 @@ public final class Crc32c {
      * @param crc the actual checksum value
      * @return the masked checksum
      */
-    public static long maskChecksum(long crc) {
-        crc &= 0x0ffffffffL;
-        return ((crc >>> 15) | (crc << 17)) + 0x0a282ead8L;
+    public static int maskChecksum(int crc) {
+        crc = (crc >>> 15) | (crc << 17);
+        crc += 0x0a282ead8L;
+        return crc;
     }
 
     /**
@@ -28,9 +29,10 @@ public final class Crc32c {
      * @param crc the masked checksum
      * @return the actual checksum value
      */
-    public static long unmaskChecksum(long crc) {
-        crc = (crc & 0x0ffffffffL) - 0x0a282ead8L;
-        return ((crc >>> 17) | (crc << 15));
+    public static int unmaskChecksum(int crc) {
+        crc -= 0x0a282ead8L;
+        crc = (crc >>> 17) | (crc << 15);
+        return crc;
     }
 
     /**
@@ -39,7 +41,7 @@ public final class Crc32c {
      * @param b - the data
      * @return the current checksum value
      */
-    public static long checksum(byte[] b) {
+    public static int checksum(byte[] b) {
         return Crc32c.checksum(b,0,b.length);
     }
 
@@ -51,7 +53,7 @@ public final class Crc32c {
      * @param len - the number of bytes to checksum
      * @return the current checksum value
      */
-    public static long checksum(byte[] b, int off, int len) {
+    public static int checksum(byte[] b, int off, int len) {
         return Crc32c.checksum(0,b,off,len);
     }
 
@@ -64,16 +66,12 @@ public final class Crc32c {
      * @param len - the number of bytes to checksum
      * @return the current checksum value
      */
-    public static long checksum(long crc, byte[] b, int off, int len) {
-        int i; long l;
-        crc ^= 0x0ffffffffL;
-        len += off;
-        while (off < len) {
-            l = b[off++] & 0x0ffL;
-            i = (int) ((crc ^ l) & 0x0ff);
-            crc = crc32Table[i] ^ (crc >>> 8) & 0x0ffffffffL;
+    public static int checksum(int crc, byte[] b, int off, int len) {
+        crc = ~crc;
+        while (len-- > 0) {
+          crc = crc32Table[(crc ^ b[off++]) & 0xff] ^ (crc >>> 8);
         }
-        return crc ^ 0x0ffffffffL;
+        return ~crc;
     }
 
     /*****************************************************************/
