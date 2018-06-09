@@ -51,11 +51,10 @@ public class SnappyDecoder {
                 if (s < 0x0f0) { // 60 << 2
                     len = s >> 2;
                 } else {
-                    len = 0;
-                    if (s > 0x0f8) len |= (src[srcPos++] & 0x0ff) << 24; // 62 << 2
-                    if (s > 0x0f4) len |= (src[srcPos++] & 0x0ff) << 16; // 61 << 2
-                    if (s > 0x0f0) len |= (src[srcPos++] & 0x0ff) << 8;  // 60 << 2
-                                   len |= (src[srcPos++] & 0x0ff);
+                    /*little-end*/ len  = (src[srcPos++] & 0x0ff);      // f0 = 60<<2
+                    if (s > 0x0f0) len |= (src[srcPos++] & 0x0ff) << 8; // f4 = 61<<2
+                    if (s > 0x0f4) len |= (src[srcPos++] & 0x0ff) << 8; // f8 = 62<<2
+                    if (s > 0x0f8) len |= (src[srcPos++] & 0x0ff) << 8; // fc = 63<<2
                 }
                 len += 1;
                 System.arraycopy(src,srcPos,dst,dstPos,len);
